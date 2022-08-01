@@ -1,5 +1,6 @@
 export default class InputHandler {
-  constructor(gameWidth, gameHeight) {
+  constructor(game) {
+    this.game = game;
     this.keys = [];
     window.addEventListener("keydown", (e) => {
       switch (e.key) {
@@ -35,10 +36,13 @@ export default class InputHandler {
             this.keys.push(e.key);
             // console.log("up");
           }
-
+          break;
+        case "d":
+          console.log("d");
+          this.game.debug = !this.game.debug;
           break;
       }
-      console.log(this.keys);
+      // console.log(this.keys);
     });
     window.addEventListener("keyup", (e) => {
       switch (e.key) {
@@ -73,7 +77,7 @@ export default class InputHandler {
 
           break;
       }
-      console.log(this.keys);
+      // console.log(this.keys);
     });
   }
 }
