@@ -3,7 +3,9 @@ export class UI {
     this.game = game;
     this.fontSize = 30;
     this.fontFamily = "Helvetica";
+    this.livesImage = document.getElementById("lives");
   }
+
   draw(context) {
     context.save();
     context.shadowColor = "white";
@@ -20,7 +22,10 @@ export class UI {
     // console.log("timer1");
     context.font = this.fontSize * 0.8 + "px " + this.fontFamily;
     context.fillText("Time: " + Math.floor(this.game.time / 1000), 20, 80);
-    // console.log("timer2");
+    // lives
+    for (let i = 0; i < this.game.lives; i++) {
+      context.drawImage(this.livesImage, 32 * i + 25, 95, 25, 25);
+    }
     // game over
     if (this.game.gameOver) {
       console.log("gameOver1");
