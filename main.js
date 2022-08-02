@@ -89,12 +89,12 @@ window.addEventListener("load", function () {
           this.collisions.splice(index, 1);
         }
         // console.log(this.collisions);
-        // handle Lives
-        if (this.lives <= 0) {
-          this.gameOver = true;
-          animate();
-        }
       });
+      // handle Lives
+      if (this.lives <= 0) {
+        this.gameOver = true;
+        animate();
+      }
     }
     draw(context) {
       this.background.draw(context);
