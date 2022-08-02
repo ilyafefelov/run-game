@@ -52,7 +52,7 @@ window.addEventListener("load", function () {
       if (this.time > this.maxTime) {
         // this.time = 0;
         this.gameOver = true;
-        animate(); // to animate the game over screen
+        // animate(); // to animate the game over screen
       }
       this.background.update();
       this.player.update(this.input.keys, deltaTime);
@@ -93,7 +93,7 @@ window.addEventListener("load", function () {
       // handle Lives
       if (this.lives <= 0) {
         this.gameOver = true;
-        animate();
+        // animate();
       }
     }
     draw(context) {
@@ -131,8 +131,8 @@ window.addEventListener("load", function () {
     lastTime = timeStamp;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     // player.update(input.lastKey);
-    game.draw(ctx, deltaTime);
     game.update(deltaTime);
+    game.draw(ctx, deltaTime);
 
     // drawStatus(ctx, input, player);
     if (!game.gameOver) requestAnimationFrame(animate);

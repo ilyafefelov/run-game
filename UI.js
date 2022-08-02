@@ -28,7 +28,7 @@ export class UI {
     }
     // game over
     if (this.game.gameOver) {
-      console.log("gameOver1");
+      console.log("gameOver1", this.game.gameOver);
       context.font = this.fontSize * 1.5 + "px " + this.fontFamily;
       context.textAlign = "center";
 
