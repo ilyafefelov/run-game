@@ -20,21 +20,37 @@ window.addEventListener("load", function () {
     constructor(width, height) {
       this.width = width;
       this.height = height;
-      this.groundMargin = 50;
+      this.groundMargin = 70;
       this.speed = 0;
       this.maxSpeed = 3;
       this.background = new Background(this);
       this.player = new Player(this);
       this.input = new InputHandler(this);
-      this.UI = new UI(this);
       this.enemies = [];
       this.enemyTimer = 0;
       this.enemyInterval = 1000;
+      this.particles = [];
+      this.maxParticles = 50;
+      this.collisions = [];
       this.debug = false;
       this.score = 0;
       this.fontColor = "black";
+      this.time = 0;
+      this.maxTime = 20_000;
+      this.gameOver = false;
+      this.UI = new UI(this);
+
+      // enter initial state
+      this.player.currentState = this.player.states[0];
+      this.player.currentState.enter();
     }
     update(deltaTime) {
+      this.time += deltaTime;
+      if (this.time > this.maxTime) {
+        // this.time = 0;
+        this.gameOver = true;
+        animate(); // to animate the game over screen
+      }
       this.background.update();
       this.player.update(this.input.keys, deltaTime);
       // handleEnemies
@@ -44,19 +60,46 @@ window.addEventListener("load", function () {
       } else {
         this.enemyTimer += deltaTime;
       }
-      this.enemies.forEach((enemy) => {
+      this.enemies.forEach((enemy, index) => {
         enemy.update(deltaTime);
         if (enemy.markedForDeletion) {
-          this.enemies.splice(this.enemies.indexOf(enemy), 1);
+          // this.enemies.splice(this.enemies.indexOf(enemy), 1);
+          this.enemies.splice(index, 1);
         }
+        // console.log(this.enemies);
+      });
+      // handleParticles
+      this.particles.forEach((particle, index) => {
+        particle.update();
+        if (particle.markedForDeletion) {
+          this.particles.splice(index, 1);
+        }
+        // console.log(this.particles);
+      });
+      if (this.particles.length > this.maxParticles) {
+        this.particles = this.particles.slice(0, this.maxParticles);
+      }
+      // handleCollisions
+      this.collisions.forEach((collision, index) => {
+        collision.update(deltaTime);
+        if (collision.markedForDeletion) {
+          this.collisions.splice(index, 1);
+        }
+        // console.log(this.collisions);
       });
     }
     draw(context) {
       this.background.draw(context);
-      this.player.draw(context);
       this.enemies.forEach((enemy) => {
         enemy.draw(context);
       });
+      this.particles.forEach((enemy) => {
+        enemy.draw(context);
+      });
+      this.collisions.forEach((collision) => {
+        collision.draw(context);
+      });
+      this.player.draw(context);
       this.UI.draw(context);
     }
     addEnemy() {
@@ -66,7 +109,7 @@ window.addEventListener("load", function () {
         this.enemies.push(new CLimbingEnemy(this));
       }
       this.enemies.push(new FlyingEnemy(this));
-      console.log(this.enemies);
+      // console.log(this.enemies);
     }
   }
 
@@ -84,7 +127,7 @@ window.addEventListener("load", function () {
     game.update(deltaTime);
 
     // drawStatus(ctx, input, player);
-    requestAnimationFrame(animate);
+    if (!game.gameOver) requestAnimationFrame(animate);
   }
   animate(0);
 });

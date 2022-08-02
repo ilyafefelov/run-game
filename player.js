@@ -1,18 +1,28 @@
-import { Sitting, Running, Jumping, Falling } from "/playerState.js";
+import {
+  Sitting,
+  Running,
+  Jumping,
+  Falling,
+  Rolling,
+  Diving,
+  Hit,
+} from "/playerState.js";
+import { CollisionAnimation } from "/collisionAnimation.js";
 export default class Player {
   constructor(game) {
     this.game = game;
     // this.gameWidth = gameWidth;
     // this.gameHeight = gameHeight;
-    this.states = [
-      new Sitting(this),
-      new Running(this),
-      new Jumping(this),
-      new Falling(this),
-    ];
-    this.currentState = this.states[0];
-    this.currentState.enter();
 
+    this.states = [
+      new Sitting(this.game),
+      new Running(this.game),
+      new Jumping(this.game),
+      new Falling(this.game),
+      new Rolling(this.game),
+      new Diving(this.game),
+      new Hit(this.game),
+    ];
     this.image = document.getElementById("player");
     this.width = 100;
     this.height = 91.3;
@@ -28,7 +38,9 @@ export default class Player {
     this.fps = 20;
     this.frameTimer = 0;
     this.frameInterval = 1000 / this.fps;
+    // this.currentState = this.states[0];
     // enter initial state
+    // this.currentState.enter();
     // this.setState(1);
   }
   update(input, deltaTime) {
@@ -43,15 +55,21 @@ export default class Player {
     } else {
       this.speed = 0;
     }
+    // horizontal boundaries
     if (this.x < 0) this.x = 0;
     if (this.x > this.game.width - this.width)
       this.x = this.game.width - this.width;
+
     // vertical movement
     this.y += this.vy;
     if (!this.onGround()) this.vy += this.weight;
     else {
       this.vy = 0;
     }
+    // vertical boundaries
+    if (this.y > this.game.height - this.height - this.game.groundMargin)
+      this.y = this.game.height - this.height - this.game.groundMargin;
+
     // sprite animation
     this.frameTimer += deltaTime;
     if (this.frameTimer > this.frameInterval) {
@@ -98,9 +116,21 @@ export default class Player {
       ) {
         // collision detected
         enemy.markedForDeletion = true;
-        this.game.score++;
-      } else {
-        // no collision
+        this.game.collisions.push(
+          new CollisionAnimation(
+            this.game,
+            enemy.x + enemy.width * 0.5,
+            enemy.y + enemy.height * 0.5
+          )
+        );
+        if (
+          this.currentState === this.states[4] ||
+          this.currentState === this.states[5]
+        ) {
+          this.game.score++;
+        } else {
+          this.setState(6, 0);
+        }
       }
     });
   }
